@@ -1,20 +1,20 @@
-# The AI fiction giveaway isn’t “delve.” It’s how the story is built.
+# AI fiction doesn’t give itself away with “delve.” It gives itself away with how the story is built.
 
-**Subtitle:** I watched a 100xEngineers reel, read the StoryScope paper, and packaged the findings into an open Claude skill for writers who care about structure.
+**Subtitle:** A new study of 61,608 parallel human and AI stories finds that narrative choices alone (plot, time, theme, resolution) separate human from AI fiction at 93.2% macro-F1, no word lists needed. I turned its findings into an open Claude skill for writers.
 
 **Suggested Medium tags:** Writing, Artificial Intelligence, Fiction, Claude AI, Creative Writing
 
 ---
 
-I scrolled past an Instagram reel from 100xEngineers that said something I had been half-suspecting for months: the obvious “AI writing” tells—em-dashes, *delve*, tapestry metaphors—are not the real giveaway anymore. Models shed those habits. What sticks longer is **story structure**. How causality is laid down. Whether time ever breaks. Whether a character’s choice is actually uncomfortable. Whether the narrator trusts you enough to leave the theme unstated.
+I read a paper that put numbers on something I had been half-suspecting for months: the obvious “AI writing” tells—em-dashes, *delve*, tapestry metaphors—are not the deepest giveaway. Surface habits are easy to edit away. What sticks is **story structure**. How causality is laid down. Whether time ever breaks. Whether a character’s choice is actually uncomfortable. Whether the narrator trusts you enough to leave the theme unstated.
 
-So I did the boring thing. I opened the paper, took notes, and built a small tool I would actually use.
+So I did the boring thing. I read the paper closely, took notes, and, inspired by it, built a small tool I would actually use.
 
 ## What StoryScope measured
 
 *StoryScope: Investigating idiosyncrasies in AI fiction* is a preprint by Jenna Russell, Rishanth Rajendhran, Chau Minh Pham, and Mohit Iyyer at the University of Maryland, with John Wieting at Google DeepMind. You can read it here: [arXiv HTML](https://arxiv.org/html/2604.03136v6). Code and data live at [github.com/jenna-russell/storyscope](https://github.com/jenna-russell/storyscope).
 
-Their setup is unusually careful for this topic. They reverse-engineered **10,272** writing prompts from human short fiction, then had each prompt answered by a human author and by five LLMs—Claude, DeepSeek, Gemini, GPT, and Kimi. That yields **61,608** stories, each on the order of **~5,000** words (corpus mean **4,753**). Instead of hunting vocabulary, they induce **304** discourse-level **narrative** features across **10** dimensions grounded in NarraBench: agent, social network, event, plot, structure, setting, time, revelation, perspective, and style.
+Their setup is unusually careful for this topic. They reverse-engineered **10,272** writing prompts from human short fiction, then had each prompt answered by a human author and by five LLMs—Claude, DeepSeek, Gemini, GPT, and Kimi. That yields **61,608** stories, each on the order of **~5,000** words (corpus mean **4,753**). Instead of hunting vocabulary, they induce **304** discourse-level features across **10** dimensions grounded in NarraBench (the narrative-only model withholds the style features and uses **257** of them): agent, social network, event, plot, structure, setting, time, revelation, perspective, and style.
 
 The headline results, taken straight from the paper:
 
@@ -23,7 +23,7 @@ The headline results, taken straight from the paper:
 - A compact set of **30** core narrative features: about **84.8%**.
 - Six-way authorship attribution with narrative features: **68.4%** macro-F1 (**77.3%** when style is included).
 
-They also show that surface editing aimed at AI prose artifacts barely moves narrative detection in their LAMP experiment (edited Gemini stories still land around **93.9%** macro-F1 on the narrative model). That matches the reel’s intuition: you can sand the diction and still leave the scaffolding.
+They also show that surface editing aimed at AI prose artifacts barely moves narrative detection. In their LAMP experiment, 278 Gemini stories were rewritten to remove artifacts like cliché and purple prose, and the narrative model still detects them at **93.9%** macro-F1, versus **95.5%** on the unedited originals: a drop of only 1.6 points. You can sand the diction and still leave the scaffolding.
 
 I am an engineering manager in Bengaluru, not a narratologist. What I wanted was practical: a checklist I could run on drafts—mine, a teammate’s narrative case study, a friend’s chapter—without pretending I had rebuilt their XGBoost stack.
 
@@ -31,17 +31,17 @@ I am an engineering manager in Bengaluru, not a narratologist. What I wanted was
 
 Section 4.1 of the paper is the part writers should steal from.
 
-AI stories in the study **over-explain themes**. Narrators explicitly comment on the theme far more often (~77% vs ~52% for humans in their reported comparison). Dialogue slides into philosophical debate. Endings resolve into internal understanding or acceptance. Plots stay on a **single causal track** with fewer subplots (~79% “no subplots” for AI vs ~57% human). Time stays mostly linear. Settings mirror inner weather. Emotion arrives as a stack of bodily metaphors (~81% vs ~38% for embodied expression as the dominant mode). Characters often walk on through external description.
+AI stories in the study **over-explain themes**. Narrators explicitly explain the story’s theme far more often (~77% vs ~52% for humans). Dialogue slides into philosophical debate (~59% vs ~34%). Endings resolve into internal understanding or acceptance (~47% vs ~27%). Plots stay on a **single causal track** with fewer subplots (~79% “no subplots” for AI vs ~57% human). Time stays mostly linear. Settings mirror inner weather. Emotion arrives as a stack of physical sensations and bodily metaphors (~81% vs ~38%), with more smell-based imagery (~82% vs ~57%).
 
-Human stories in the same parallel design are messier in useful ways: more **morally ambivalent** protagonists (~59% vs ~38%), more subplots that actually echo or contrast a theme, more flashbacks and chronological discontinuity, more willingness to leave meaning inferred, more specific named references to the outside world, more direct address to the reader.
+Human stories in the same parallel design are messier in useful ways: more **morally ambivalent** protagonists (~59% vs ~38%), more subplots integrated into the overarching theme (~42% vs ~21%), more flashbacks and chronological discontinuity, more willingness to leave meaning inferred, more specific named references to the outside world (~47% vs ~24% for specific texts and authors), more direct address to the reader (~28% vs ~7%).
 
 The five AI models also **cluster**. In their projection of narrative feature space, humans occupy a distinct region while Claude, GPT, Gemini, DeepSeek, and Kimi sit closer to one another. Human stories are rarer on average in that space (mean rarity percentile **0.71** vs **0.49** for AI). That is a research finding about a corpus, not a personality test for your weekend draft—but it explains why so much generated fiction feels like it was built in the same workshop.
 
-The paper reports per-model fingerprints too. Claude’s event escalation is notably flat; it often favors restrained, uniform voice and quieter endings. GPT leans on gossip and rumor as a plot mechanism. Gemini defaults toward external character description in the abstract’s summary (and shows other quirks such as tidy denouements in their fingerprint notes). DeepSeek and Kimi sit nearer the generic AI center. Treat fingerprints as color from their corpus, not courtroom evidence about a paragraph you pasted into chat.
+The paper reports per-model fingerprints too. Claude’s event escalation is notably flat; its narrative voice is the most uniform and it favors quiet endings. GPT leans on gossip and rumor as a plot mechanism. Gemini defaults to external character description and produces the tidiest endings and extended denouements. DeepSeek front-loads crucial context, and Kimi sits at the generic center of the AI distribution. Treat fingerprints as color from their corpus, not courtroom evidence about a paragraph you pasted into chat.
 
 ## Why structure is the craft problem I care about
 
-Lexical tells are a moving target. The StoryScope authors note that style cues are strong—and also brittle when models update or when someone runs a rewrite pass. Narrative choices are slower to fake because changing them means replotting, not synonym-swapping.
+Lexical tells are a moving target. The StoryScope authors find style cues are strong (style features alone reach **85.8%** macro-F1), but they note that style-based detectors are known to be brittle to paraphrasing and light editing, and that narrative features, because they reflect structural decisions, may prove more durable as models evolve. Narrative choices are slower to fake because changing them means replotting, not synonym-swapping.
 
 For writers, that maps to ordinary revision questions:
 
