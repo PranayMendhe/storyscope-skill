@@ -1,100 +1,78 @@
-# AI fiction doesn’t give itself away with “delve.” It gives itself away with how the story is built.
+# AI fiction gives itself away in how the story is built
 
-**Subtitle:** A new study of 61,608 parallel human and AI stories finds that narrative choices alone (plot, time, theme, resolution) separate human from AI fiction at 93.2% macro-F1, no word lists needed. I turned its findings into an open Claude skill for writers.
+**Subtitle:** A new study of 61,608 parallel human and AI stories finds that narrative choices alone (plot, time, theme, resolution) separate human from AI fiction at 93.2% macro-F1, with no word lists involved. I turned its findings into an open Claude skill for writers.
 
 **Suggested Medium tags:** Writing, Artificial Intelligence, Fiction, Claude AI, Creative Writing
 
 ---
 
-I read a paper that put numbers on something I had been half-suspecting for months: the obvious “AI writing” tells—em-dashes, *delve*, tapestry metaphors—are not the deepest giveaway. Surface habits are easy to edit away. What sticks is **story structure**. How causality is laid down. Whether time ever breaks. Whether a character’s choice is actually uncomfortable. Whether the narrator trusts you enough to leave the theme unstated.
+Most of us carry a mental list of AI writing tells by now. Em-dashes everywhere, and the word *delve*. I have that list too, and I still catch myself scanning for it.
 
-So I did the boring thing. I read the paper closely, took notes, and, inspired by it, built a small tool I would actually use.
+A recent paper convinced me that list is looking at the wrong layer. Word habits are easy to edit out. What stays is the structure: how cause and effect get laid down, whether time ever breaks, whether a character's choice actually costs them anything, and whether the narrator trusts you to find the theme yourself.
 
-## What StoryScope measured
+So I read it properly, and then built a small tool I'd actually use on drafts.
 
-*StoryScope: Investigating idiosyncrasies in AI fiction* is a preprint by Jenna Russell, Rishanth Rajendhran, Chau Minh Pham, and Mohit Iyyer at the University of Maryland, with John Wieting at Google DeepMind. You can read it here: [arXiv HTML](https://arxiv.org/html/2604.03136v6). Code and data live at [github.com/jenna-russell/storyscope](https://github.com/jenna-russell/storyscope).
+## The paper
 
-Their setup is unusually careful for this topic. They reverse-engineered **10,272** writing prompts from human short fiction, then had each prompt answered by a human author and by five LLMs—Claude, DeepSeek, Gemini, GPT, and Kimi. That yields **61,608** stories, each on the order of **~5,000** words (corpus mean **4,753**). Instead of hunting vocabulary, they induce **304** discourse-level features across **10** dimensions grounded in NarraBench (the narrative-only model withholds the style features and uses **257** of them): agent, social network, event, plot, structure, setting, time, revelation, perspective, and style.
+*StoryScope: Investigating idiosyncrasies in AI fiction* is a preprint by Jenna Russell, Rishanth Rajendhran, Chau Minh Pham and Mohit Iyyer at the University of Maryland, with John Wieting at Google DeepMind. The [arXiv HTML version](https://arxiv.org/html/2604.03136v6) is very readable, and the code and data are at [github.com/jenna-russell/storyscope](https://github.com/jenna-russell/storyscope).
 
-The headline results, taken straight from the paper:
+The setup is careful. They reverse-engineered 10,272 writing prompts from human short fiction. Each prompt has the original human story plus a version from each of five LLMs: Claude, DeepSeek, Gemini, GPT and Kimi. That comes to 61,608 stories of roughly 5,000 words each (the corpus mean is 4,753). From these they built 304 discourse-level features across 10 dimensions taken from the NarraBench taxonomy, namely agent, social network, event, plot, structure, setting, time, revelation, perspective and style. The narrative-only model leaves the style features out and works with 257.
 
-- Narrative features alone: **93.2%** macro-F1 for human vs. AI.
-- Narrative + style: **96.0%**.
-- A compact set of **30** core narrative features: about **84.8%**.
-- Six-way authorship attribution with narrative features: **68.4%** macro-F1 (**77.3%** when style is included).
+The numbers that stuck with me:
 
-They also show that surface editing aimed at AI prose artifacts barely moves narrative detection. In their LAMP experiment, 278 Gemini stories were rewritten to remove artifacts like cliché and purple prose, and the narrative model still detects them at **93.9%** macro-F1, versus **95.5%** on the unedited originals: a drop of only 1.6 points. You can sand the diction and still leave the scaffolding.
+- Narrative features alone: 93.2% macro-F1 at telling human from AI.
+- Narrative plus style: 96.0%.
+- Only 30 core narrative features: 84.8%.
+- Six-way attribution (which of the six sources wrote it): 68.4% with narrative features, 77.3% once style is added.
 
-I am an engineering manager in Bengaluru, not a narratologist. What I wanted was practical: a checklist I could run on drafts—mine, a teammate’s narrative case study, a friend’s chapter—without pretending I had rebuilt their XGBoost stack.
+The editing test convinced me most. They took 278 Gemini stories and had them rewritten with LAMP, a method that goes after AI prose artifacts like cliché and purple prose. The narrative model still caught the edited stories at 93.9% macro-F1, compared with 95.5% on the originals. A drop of 1.6 points. Cleaning up the sentences barely touched the skeleton underneath.
 
-## What “AI narrative tells” look like on the page
+I'm an engineering manager in Bengaluru, not a narratologist. I didn't want to rebuild their classifier. I wanted a checklist for drafts, my own or ones that teammates and friends send me.
 
-Section 4.1 of the paper is the part writers should steal from.
+## What the tells look like on the page
 
-AI stories in the study **over-explain themes**. Narrators explicitly explain the story’s theme far more often (~77% vs ~52% for humans). Dialogue slides into philosophical debate (~59% vs ~34%). Endings resolve into internal understanding or acceptance (~47% vs ~27%). Plots stay on a **single causal track** with fewer subplots (~79% “no subplots” for AI vs ~57% human). Time stays mostly linear. Settings mirror inner weather. Emotion arrives as a stack of physical sensations and bodily metaphors (~81% vs ~38%), with more smell-based imagery (~82% vs ~57%).
+Section 4.1 is the part writers should read slowly. It's almost a set of revision notes.
 
-Human stories in the same parallel design are messier in useful ways: more **morally ambivalent** protagonists (~59% vs ~38%), more subplots integrated into the overarching theme (~42% vs ~21%), more flashbacks and chronological discontinuity, more willingness to leave meaning inferred, more specific named references to the outside world (~47% vs ~24% for specific texts and authors), more direct address to the reader (~28% vs ~7%).
+AI stories over-explain their themes. The narrator explicitly states the theme 77% of the time, against 52% for human stories. Dialogue drifts into philosophical debate more often (59% vs 34%). Endings tend to settle on internal understanding or acceptance (47% vs 27%). Plots run on one causal track, and 79% of AI stories have no subplots at all, compared with 57% of human ones. Emotion comes through the body as physical sensations and bodily metaphors (81% vs 38%), and there's a surprising amount of smell (82% vs 57%). Where a person might just write that someone felt afraid, the model gives you a tight chest and a cold sweat. Humans use plain emotion labels 29% of the time. AI does it 8% of the time.
 
-The five AI models also **cluster**. In their projection of narrative feature space, humans occupy a distinct region while Claude, GPT, Gemini, DeepSeek, and Kimi sit closer to one another. Human stories are rarer on average in that space (mean rarity percentile **0.71** vs **0.49** for AI). That is a research finding about a corpus, not a personality test for your weekend draft—but it explains why so much generated fiction feels like it was built in the same workshop.
+Human stories are messier, mostly in useful ways. Their protagonists are morally ambivalent more often (59% vs 38%). Subplots that tie back into the main theme show up twice as often (42% vs 21%). People use more flashbacks and time jumps, and seem more comfortable leaving an ending ambiguous. They name real texts and authors more (47% vs 24%), and they speak directly to the reader far more often (28% vs 7%).
 
-The paper reports per-model fingerprints too. Claude’s event escalation is notably flat; its narrative voice is the most uniform and it favors quiet endings. GPT leans on gossip and rumor as a plot mechanism. Gemini defaults to external character description and produces the tidiest endings and extended denouements. DeepSeek front-loads crucial context, and Kimi sits at the generic center of the AI distribution. Treat fingerprints as color from their corpus, not courtroom evidence about a paragraph you pasted into chat.
+The models also look a lot like each other. When every story is turned into a vector of narrative features, the five AI models sit in one tight cluster and the human stories occupy their own region. Human stories are rarer in that space on average (mean rarity percentile 0.71, against 0.49 for AI). That's a finding about a corpus of long stories, and I wouldn't apply it to anyone's weekend draft. It does explain why so much generated fiction feels like it came out of the same workshop.
 
-## Why structure is the craft problem I care about
+There are per-model fingerprints too, and some are fun. Claude's escalation is the flattest of the lot, and it likes quiet endings. GPT leans on gossip and rumour as a plot device. Gemini goes for the tidiest endings, with long denouements. DeepSeek puts important context up front where the others hold it back, while Kimi sits at the generic centre of the AI distribution. I'd treat this as colour from their corpus, not evidence about one paragraph you pasted into a chat window.
 
-Lexical tells are a moving target. The StoryScope authors find style cues are strong (style features alone reach **85.8%** macro-F1), but they note that style-based detectors are known to be brittle to paraphrasing and light editing, and that narrative features, because they reflect structural decisions, may prove more durable as models evolve. Narrative choices are slower to fake because changing them means replotting, not synonym-swapping.
+Word-level tells keep moving, which is why I care more about structure. Style features alone still reach 85.8% macro-F1 in the paper, but the authors note that style-based detectors are known to be brittle under paraphrasing and light editing. Narrative features may last longer as models change, they suggest, because changing them means replotting the story.
 
-For writers, that maps to ordinary revision questions:
+For a writer this is ordinary revision work. Find where the story preaches its theme, and check whether there's a second thread at all. Could the timeline break once, so a reveal changes how earlier scenes read? Escalation with no lasting cost is another thing to catch, and so is a protagonist whose choice comes too easily. It doesn't matter whether a person or a model wrote the first draft, and I have no interest in helping anyone beat a detector. I'd just like to read fewer stories that end with the narrator explaining the lesson while the weather nods along.
 
-1. Where is the theme being sermonized?
-2. Where did the subplot go?
-3. Where could time break so a reveal rewrites earlier scenes?
-4. Where is escalation flat—intensity without irreversible cost?
-5. Where is the protagonist’s choice too clean?
+## The skill: narrative-depth
 
-Those questions help whether the draft began as human, AI-assisted, or a mix. I am not interested in helping anyone “beat a detector.” I am interested in fewer stories that end with the narrator explaining the lesson while the weather nods in agreement.
+I packaged all of this as an open Claude Agent Skill called `narrative-depth`. It's at [github.com/PranayMendhe/storyscope-skill](https://github.com/PranayMendhe/storyscope-skill).
 
-## What I built: `narrative-depth`
+It has two modes. In AUDIT you paste a story or chapter, and it scores each of the ten dimensions on a 1–5 "formulaic narrative pressure" scale and quotes the passages behind each score, so you can see which AI-leaning tells it picked up. The overall score is meant as a craft signal. It says nothing about who wrote the text, and if the excerpt is too short to judge, the skill is supposed to say so.
 
-I packaged the above as an open Claude Agent Skill named **`narrative-depth`**:
+REVISE suggests structural moves first and rewrites only if asked. Typical ones: adding a moral cost, adding a subplot that pulls against the main one, breaking chronology once on purpose, escalating consequences instead of adjectives, and cutting the closing paragraph that explains what it all meant.
 
-**Repo:** [github.com/PranayMendhe/storyscope-skill](https://github.com/PranayMendhe/storyscope-skill)
+Two reference files, `narrative-tells.md` and `revision-moves.md`, keep the model anchored to the paper instead of its own theory of fiction. It should refuse "make this undetectable" requests. If you ask it "is this AI?", it should decline to give a verdict and offer the craft audit instead.
 
-Two modes.
+The repo also has a short original sample story, written to be preachy on purpose, with an example audit. Both are labelled as examples. Neither is StoryScope data.
 
-**AUDIT.** Paste a story or chapter. The skill scores each of the ten dimensions on a simple 1–5 “formulaic narrative pressure” scale, quotes evidence, and lists which AI-leaning tells appear. The overall score is labeled as a **craft signal**, not authorship. If evidence is thin—because the excerpt is short—it should say so.
+On that sample the flags should pile up: a narrator stating the moral, weather standing in for mood, dialogue used as a thesis, an ending built on quiet acceptance, and no subplot. Time might look barely formulaic, simply because a piece under 300 words has no room for a flashback. That gap matters. StoryScope's features came from long stories, and short pieces under-trigger things like time and social network. I'd rather the tool say "not enough evidence" than make up a score.
 
-**REVISE.** Concrete structural moves first. A full rewrite only if you ask. Typical moves: add moral cost; add a contrasting subplot; break chronology once on purpose; escalate consequences rather than adjectives; cut the closing paragraph that explains What It All Meant; mix explicit emotion and behavior instead of only bodily metaphor stacks.
+To install it:
 
-The skill ships with reference files (`narrative-tells.md`, `revision-moves.md`) so the model is anchored to the paper’s themes instead of inventing a private theory of fiction. It should refuse “make this undetectable” framing. If you ask “is this AI?”, it should decline the verdict and offer the craft audit instead.
+- **Claude Code:** copy `skills/narrative-depth` into `~/.claude/skills/` (personal) or `.claude/skills/` (project), then start Claude and ask for a narrative-structure audit.
+- **claude.ai:** run `make zip` in the repo and upload `dist/narrative-depth.zip` under Settings → Features. You need a plan with code execution enabled, and custom skills there are per-user.
 
-There is a tiny original sample story in the repo, written on purpose to be tidy and preachy, plus an illustrative audit. They are labeled as examples, not as StoryScope data.
+For the Claude API, upload it through Anthropic's Skills API and pass the `skill_id` in the Messages `container` along with the code execution tool. API skills don't sync to claude.ai on their own.
 
-### Install (the version I actually documented)
+The format itself is simple: a folder with a `SKILL.md` whose YAML frontmatter has a `name` and a `description`, plus optional reference files. The description must say what the skill does and when to use it, since Claude reads it to decide whether to load the skill.
 
-- **Claude Code:** copy `skills/narrative-depth` into `~/.claude/skills/` (personal) or `.claude/skills/` (project). Start Claude and ask for a narrative-structure audit.
-- **claude.ai:** run `make zip` in the repo, then upload `dist/narrative-depth.zip` under **Settings → Features**. This needs a plan with code execution enabled. Custom skills there are per-user.
-- **Claude API:** upload through Anthropic’s Skills API, then pass the `skill_id` in the Messages `container` with the code execution tool. API skills do not auto-sync to claude.ai.
+## Limitations
 
-Anthropic’s Agent Skills format is a folder with `SKILL.md` YAML frontmatter (`name`, `description`) plus optional reference files. The description has to say **what** the skill does and **when** to use it; that is how Claude decides to load it.
+This isn't StoryScope's classifier. It's an editorial procedure based on the feature themes they published. Short posts and marketing copy are well outside what the paper studied. Models change too, and narrative defaults may drift the way word-level tells already have. A macro-F1 score on a parallel corpus is not a verdict on a person, so please don't use this to accuse anyone. I'm also not affiliated with the authors. Cite them for the research. The rough edges in the skill are mine.
 
-## A quick sense of an audit
-
-On a preachy sample, the skill should light up **Plot**, **Setting**, and **Perspective**: narratorial morals, weather-as-mood, dialogue-as-thesis, internal-acceptance ending, no subplot. Time might score low-formulaic simply because a 400-word sample cannot show flashbacks. That asymmetry matters. StoryScope’s features were extracted on long stories; a tweet-length vignette will under-trigger temporal and network features. Honest tooling says “insufficient evidence” instead of inventing a score.
-
-## Limitations I want on the record
-
-- This skill is **not** StoryScope’s classifier. It is editorial procedure guided by their published feature themes.
-- Short posts, emails, and marketing copy are outside the paper’s regime.
-- Models change. Yesterday’s lexical tells fade; narrative defaults may drift too.
-- Parallel-corpus macro-F1 is not a personal verdict. Do not use this to accuse a stranger of authorship fraud.
-- I am not affiliated with the StoryScope authors. Cite them for the science; blame me for the skill’s rough edges.
-
-## Without a moral
-
-I still notice em-dashes. I still flinch at *delve*. After reading StoryScope, I spend more time asking whether a draft’s time is too straight, whether its ending forgives too easily, and whether the narrator is doing the reader’s job.
-
-That is the whole project: a paper worth reading, a small open skill, and a preference for structural honesty over vibes.
+I still notice em-dashes, and I still wince a little at *delve*. These days I also check whether a draft's timeline runs too straight, and whether the narrator is doing the reader's job for them.
 
 **Repo:** https://github.com/PranayMendhe/storyscope-skill  
-**Paper:** https://arxiv.org/html/2604.03136v6  
-**Official code/data:** https://github.com/jenna-russell/storyscope
+**Paper:** https://arxiv.org/html/2604.03136v6 (official code and data: https://github.com/jenna-russell/storyscope)
